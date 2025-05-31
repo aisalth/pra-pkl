@@ -42,14 +42,45 @@ document.querySelectorAll('.add-to-chart').forEach(button => {
     });
 });
 
-let iconCart = document.querySelector('cart-btn'); // cari elemen dengan class 'icon-cart'
-let closeCart = document.querySelector('.close');    // cari elemen dengan class 'close'
-let body = document.querySelector('body');           // ambil elemen body
+let iconCart = document.querySelector('cart-btn');
+let closeCart = document.querySelector('.close');  
+let body = document.querySelector('body');        
 
-iconCart.addEventListener('click', () => {
-  body.classList.toggle('showCart'); // tambahkan atau hilangkan class 'showCart'
-});
+// iconCart.addEventListener('click', () => {
+//   body.classList.toggle('showCart'); // tambahkan atau hilangkan class 'showCart'
+// });
 
 closeCart.addEventListener('click', () => {
-  body.classList.toggle('showCart'); // sama aja kayak di atas
+  body.classList.toggle('showCart'); 
 });
+
+
+    $('.add_to_cart').click(function (e) {
+        e.preventDefault();
+
+        
+        var item = $(this).closest('.product-area');
+        var nama = item.find('.product-name').text();
+        var harga = item.find('.product-price').text();
+        var gambar = item.find('.product-image').attr('src');
+        var id_product = $(this).data('id');
+
+        $.ajax({
+            method: "POST",
+            url: "product.php",
+            data: {
+                add_to_cart: true,
+                nama: nama,
+                harga: harga,
+                gambar: gambar,
+                id_product: id_product
+            },
+            success: function (response) {
+                alert(response);
+            }
+            // dataType: "dataType",
+            // succes: function (response){
+
+            // }
+        })
+    })

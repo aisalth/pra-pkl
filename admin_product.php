@@ -1,3 +1,65 @@
+<?php
+
+    include "koneksi.php";
+
+        if(isset($_POST['add_product'])){
+
+        $nama = $_POST['nama'];
+        $nama = filter_var($nama, FILTER_SANITIZE_STRING);
+        $harga = $_POST['harga'];
+        $harga = filter_var($harga, FILTER_SANITIZE_STRING);
+        $stok = $_POST['stok'];
+        $stok = filter_var($stok, FILTER_SANITIZE_STRING);
+        $kategori = $_POST['kategori'];
+        $kategori = filter_var($kategori, FILTER_SANITIZE_STRING);
+        $deskripsi = $_POST['deskripsi'];
+        $deskripsi = filter_var($deskripsi, FILTER_SANITIZE_STRING);
+
+        $gambar = $_FILES['gambar']['name'];
+        $gambar = filter_var($gambar, FILTER_SANITIZE_STRING);
+        $gambar_size = $_FILES['gambar']['size'];
+        $gambar_tmp_name = $_FILES['gambar']['tmp_name'];
+        $gambar_folder = 'product_image/'.$gambar;
+
+        $select_products = mysqli_query($koneksi, "SELECT * FROM products WHERE nama = '$nama'");
+
+        if($select_products = mysqli_num_rows($select_products) > 0){
+            $message[] = 'nama produk sudah ada!';
+        }else{
+
+            $insert_products = mysqli_query($koneksi, "INSERT INTO products(gambar, nama, harga, stok, deskripsi, kategori) VALUES('$gambar', '$nama', '$harga', '$stok', '$deskripsi', '$kategori')");
+
+            if($insert_products){
+                if($gambar_size > 2000000){
+                    $message[] = 'ukuran gambar terlalu besar!';
+                }else{
+                    move_uploaded_file($gambar_tmp_name, $gambar_folder);
+                    $message[] = 'produk baru ditambahkan!';
+                }
+
+            }
+
+            }
+        }
+
+
+    if(isset($_GET['delete'])){
+
+   $delete_id = $_GET['delete'];
+   $delete_product_gambar = mysqli_query($koneksi, "SELECT * FROM products WHERE id_product = '$delete_id'");
+   $fetch_delete_image = mysqli_fetch_assoc($delete_product_gambar);
+   unlink('product_image/'.$fetch_delete_image['gambar']);
+   $delete_product = mysqli_query($koneksi, "DELETE FROM products WHERE id_product = '$delete_id'");
+   $delete_cart =  mysqli_query($koneksi, "DELETE FROM products WHERE id_product = '$delete_id'");
+//    $delete_wishlist = $conn->prepare("DELETE FROM wishlist WHERE pid = ?");
+//    $delete_wishlist->execute([$delete_id]);
+   header('location:admin_product.php');
+}
+
+include "message_alert.php";
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +75,6 @@
     <title>Document</title>
 </head>
 <body>
-    
 
     <div class="sidebar">
         <div class="sidebar-header">
@@ -112,9 +173,14 @@
             </div>
         </div>
 
+        <a href="admin_product.php#add_products"><button class="add-button" id="addProductBtn">
+             Tambah Produk
+        </button></a>
+
         <!-- Placeholder for additional content that will come later -->
         <div id="additional-content-area"></div>
     
+        
 
     <!-- Customer Table Section -->
     <div class="customers-sectionpes">
@@ -139,36 +205,79 @@
         <table class="customers-table">
             <thead>
                 <tr>
+                    <th>gambar Produk</th>
                     <th>Nama Produk</th>
                     <th>kategori</th>
                     <th>Deskripsi</th>
                     <th>Harga</th>
                     <th>Stok</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
+                <?php
+                    $select_products = mysqli_query($koneksi, "SELECT * FROM products");
+                    while($product = mysqli_fetch_assoc($select_products)){ 
+                ?>
+                <form action="" method="post">
                 <tr>
-                    <td>Croissant</td>
-                    <td>083444444444</td>
-                    <td>Lorem Ipsum</td>
-                    <td>Rp 18.000</td>
-                    <td>30</td>
+                    <input type="hidden" values="<?= $product['id_product'] ?>" name="id_product">
+                    <td><img src="product_image/<?= $product['gambar']; ?>" name="gambar" class="gambar" alt=""></td>
+                    <td><?= $product['nama'] ?></td>
+                    <td><?= $product['kategori'] ?></td>
+                    <td><?= $product['deskripsi'] ?></td>
+                    <td><?= $product['harga'] ?></td>
+                    <td><?= $product['stok'] ?></td>
+                    <td>><div class="flex-btn">
+                        <a href="update_product.php?update=<?= $product['id_product']; ?>" class="option-btn">Perbarui</a>
+                        <a href="admin_product.php?delete=<?= $product['id_product']; ?>" class="delete-btn" onclick="return confirm('hapus produk ini?');">Hapus</a>
+                    </div></td
                 </tr>
-                <tr>
-                    <td>Choux</td>
-                    <td>08666666666</td>
-                    <td>Lorem Ipsum</td>
-                    <td>Rp 18.000</td>
-                    <td>30</td>
-                </tr>
-                <!-- More rows can be added dynamically via JavaScript -->
+                <?php }  ?>
+                </form>
             </tbody>
         </table>
     </div>
 
-    <a href="tambah.php"><button class="add-button" id="addProductBtn">
-        Tambah Produk
-    </button></a>
+
+    <section class="add-products" id="add_products">
+
+   <h1 class="heading">tambahkan produk</h1>
+
+   <form action="" method="post" enctype="multipart/form-data">
+      <div class="flex">
+         <div class="inputBox">
+            <span>nama produk (wajib)</span>
+            <input type="text" class="box" required maxlength="100" placeholder="masukkan nama produk" name="nama">
+         </div>
+         <div class="inputBox">
+            <span>harga produk (wajib)</span>
+            <input type="number" min="0" class="box" required max="9999999999" placeholder="masukkan harga produk" onkeypress="if(this.value.length == 10) return false;" name="harga">
+         </div>
+         <div class="inputBox">
+            <span>stok produk (wajib)</span>
+            <input type="number" class="box" required maxlength="100" placeholder="masukkan stok produk" name="stok">
+         </div>
+         <div class="inputBox">
+            <span>deskripsi (wajib)</span>
+            <textarea name="deskripsi" id=""></textarea>
+         </div>
+         <label for="">kategori</label>
+         <select name="kategori" id="cars">
+            <option value="croissant">croissant</option>
+            <option value="fleur">Saab</option>
+            <option value="choux">Mercedes</option>
+            <option value="audi">Audi</option>
+         </select>
+        <div class="inputBox">
+            <span>gambar (wajib)</span>
+            <input type="file" name="gambar" accept="image/jpg, image/jpeg, image/png, image/webp" class="box" required>
+        </div>
+      </div>
+      
+      <input type="submit" value="Tambahkan Produk" class="btn" name="add_product">
+   </form>
+
 </div>
 
 

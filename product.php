@@ -8,15 +8,19 @@
         $quantity = 1;
         $id_product = $_POST['id_product'];
 
-        $select_cart = mysqli_query($koneksi, "SELECT * FROM cart WHERE nama = '$nama'");
+        $select_cart = mysqli_query($koneksi, "SELECT * FROM cart WHERE id_product = '$id_product'");
 
         if(mysqli_num_rows($select_cart) > 0){
+            $update_product= mysqli_query($koneksi, "UPDATE cart SET quantity = quantity + 1 WHERE id_product = '$id_product' LIMIT 1");
             $message[] = "Produk akan ditambahkan ke keranjang";
         } else{
             $insert_product = mysqli_query($koneksi, "INSERT INTO cart(nama, harga, quantity, gambar, id_product) VALUES('$nama', '$harga', '$quantity', '$gambar', '$id_product')") ;
             $message = "Produk telah ditambahkan ke keranjang";
         }
     }
+
+     
+
 
     // if(isset($_POST['add_to_fav'])){
     //     $name = $_POST['name'];
@@ -51,6 +55,9 @@
     <title>Beranda</title>
 </head>
 <body>
+
+    <?php include "message_alert.php"; ?>
+
     <header class="header">
         <a href="" class="logo"><img src="c:\Users\ASUS\Downloads\222.png" ></a>
         
@@ -178,7 +185,7 @@
                 <input type="hidden" name="gambar" value="<?= $product['gambar'] ?>">
                 <input type="hidden" name="nama" value="<?= $product['nama'] ?>">
                 <input type="hidden" name="harga" value="<?= $product['harga'] ?>">
-                <img src="image/<?= $product['gambar']; ?>" alt="" class="product-image">
+                <img src="product_image/<?= $product['gambar']; ?>" alt="" class="product-image">
                 <div class="product-title"><?= $product['nama']; ?></div>
                 <div class="rating">
                                 <span class="star">★★★★</span>

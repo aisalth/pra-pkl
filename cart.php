@@ -3,11 +3,17 @@
 
 
     if(isset($_POST['update_qty'])){
-        $id_cart = $_POST['id_cart'];
+        $id_product = $_POST['id_product'];
         $quantity = $_POST['quantity'];
-        $quantity = filter_var($quantity, FILTER_SANITIZE_STRING);
-        $update_qty = mysqli_query($koneksi, "UPDATE `cart` SET quantity = '$quantity' WHERE id_cart = '$id_cart'");
-        $message[] = 'jumlah keranjang diperbarui';
+
+        $select_cart = mysqli_query($koneksi, "SELECT * FROM cart WHERE id_product = '$id_product'");
+
+        if(mysqli_num_rows($select_cart) > 0){
+            $update_qty = mysqli_query($koneksi, "UPDATE `cart` SET quantity = '$quantity' WHERE id_product = '$id_product'");
+        }
+
+
+        // $message[] = 'jumlah keranjang diperbarui';
 }
 ?>
 
@@ -20,6 +26,7 @@
     src="https://kit.fontawesome.com/bd5eaea774.js" 
     crossorigin="anonymous">
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="dekstop14.css">
     <title>Document</title>
 </head>
@@ -74,33 +81,32 @@
 
                  ?>
                  <form class="item" method="post">
-                    <input type="hidden" name="id_cart">
+                    <input type="hidden" name="id_cart" value="<?= $cart['id_cart']; ?>">
+                    <input type="hidden" name="id_product" value="<?= $cart['id_product']; ?>">
                     <input type="checkbox" class="item-checkbox" checked>
-                    <img src="image/<?= $cart['gambar']; ?>" alt="Croissant" class="item-image">
+                    <img src="product_image/<?= $cart['gambar']; ?>" alt="Croissant" class="item-image">
                     <div class="item-details">
                         <div class="item-name"><?= $cart['nama']; ?></div>
-                        <div class="item-variant"><?= $cart['']; ?></div>
-                        <div class="item-price"><?= $total = ($cart['harga'] * $cart['quantity']); ?></div>
+                        <!-- <div class="item-variant"><?= $cart['']; ?></div> -->
+                        <div class="item-price">Rp <?= $cart['harga']; ?></div>
                     </div>
                     <div class="item-actions">
                         <button class="action-btn delete-btn"><i class="fa-regular fa-trash-can"></i></button>
                         
                         <div class="quantity-control">
-                            <button class="action-btn decrease-btn" name="update_qty">-</button>
+                            <button class="action-btn decrease-btn update_qty" name="update_qty">-</button>
                             <input type="number" class="quantity-input" name="quantity" value="<?= $cart['quantity']; ?>" readonly>
-                            <button class="action-btn increase-btn" name="update_qty">+</button>
+                            <button class="action-btn increase-btn update_qty" name="update_qty">+</button>
                         </div>
-
-                        <input type="hidden" name="" values="<?php $total = ($cart['harga'] * $cart['quantity']); ?>">
-
                     </div>
                 </div>
-
+                </form>
                 <?php 
+                    $total = ($cart['harga'] * $cart['quantity']);
+                    $grandTotal += $total ;
                         }
                     }
                 ?>
-                
                 
             </div>
         </div>
@@ -111,13 +117,31 @@
         <div class="summary-ine">
             <div class="summary-row">
                 <span>Sub Total</span>
-                <span>Rp <?= $grandTotal += $total ?></span>
+                <span>Rp <?= $grandTotal ?></span>
             </div>
-            <button class="checkout-btn">Pesan Sekarang</button>
+            <button class="checkout-btn" id="openModal">Pesan Sekarang</button>
         </div>
     </div>
 </div>
 
+<div class="modal" id="modal">
+    <div class="modal-inner">
+        <h2>Silahkan Opsi Pembelian</h2>
+        <div class="delivery">
+            <a href="checkout_delivery.php">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Delivery</span>
+            </a>
+        </div>
+        <div href="checkout_pickup.html" class="pick-up">
+            <a href="checkout_pickup.php">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Ambil Di Tempat</span>
+            </a>
+        </div>
+        <button id="closeModal">x</button>
+    </div>
+</div>
 
 
 

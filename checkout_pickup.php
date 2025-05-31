@@ -1,3 +1,8 @@
+<?php
+    include "koneksi.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,72 +70,56 @@
                 </div>
 
                 <div class="card">
-                    <div class="payment-title">Pembayaran</div>
-                    
-                    <div class="payment-options">
-                        <button class="option-btn active">E-Wallet</button>
-                        <button class="option-btn">Credit/Debit</button>
-                        <button class="option-btn">Tunai</button>
+                    <div class="detail-customer">
+                        <div class="payment-title">Detail Customer</div>
+                        <div class="editBtn" id="editBtn"><Edit</div>
                     </div>
-                    
-                    <div class="divider"></div>
-                    
-                    <div class="payment-wrapper">
-                        <div class="payment-method">
-                            <div class="radio-container" id="radio-select"></div>
-                            <div class="card-icon">
-                                <span class="material-symbols-outlined">
-                                    credit_card
-                                    </span>
-                                <div class="card-icon-plus">
-                                    <i class="fa-solid fa-circle-plus"></i>
-                                </div>
-                            </div>
+
+                    <div class="edit-detail">
+                        <div class="inner-edit">
+                            <form action="">
+                                <input type="hidden" name="">
+                                <label for="">Nama</label>
+                                <input type="text">
+                                <label for="">Nomor HandPhone</label>
+                                <input type="number" name="" id="">
+                                <label for="">Email</label>
+                                <input type="text">
+                            </form>
                         </div>
-                        
-                        <a href="dekstop27.html"><button class="add-card-btn">
-                            <div class="plus-circle">
-                                <i class="fa-solid fa-circle-plus"></i>
-                            </div>
-                            Tambah Kartu
-                        </button></a>
+                    </div>
+
+                    <div class="store-address">
+                        <div>
+                            <span class="store-name">Aisyah</span>
+                            <span class="store-phone"> | +628384664382</span>
+                        </div>
+                        <div class="store-location">aisyahfunis@gmail.com</div>
                     </div>
                 </div>
 
                 <div class="card product-section">
                     <h2>Produk</h2>
+                    <?php
+                    $grandTotal = 0;
+                    $select_cart = mysqli_query($koneksi, "SELECT * FROM cart");
+                    if(mysqli_num_rows($select_cart) > 0){
+                        while($cart = mysqli_fetch_assoc($select_cart)){
+                    ?>
                     <div class="product-item">
-                        <img src="image\newjir.png" alt="Croissant" class="product-image">
+                        <img src="product_image/<?= $cart['gambar']; ?>" alt="Croissant" class="product-image">
                         <div class="product-details">
-                            <div class="product-name">Croissant</div>
-                            <div class="product-variant"><i>Strawberry Deluxe</i></div>
+                            <div class="product-name"><?= $cart['nama']; ?></div>
+                            <div class="product-variant"><i></i></div>
                         </div>
-                        <div class="product-price">Rp 18.000,00</div>
+                        <div class="product-price"><?= $cart['harga']; ?></div>
+                        <div class="product-quantity"><?= $cart['quantity']; ?></div>
                     </div>
-                    <div class="product-item">
-                        <img src="image\newjir.png" alt="Croissant" class="product-image">
-                        <div class="product-details">
-                            <div class="product-name">Croissant</div>
-                            <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                        </div>
-                        <div class="product-price">Rp 18.000,00</div>
-                    </div>
-                    <div class="product-item">
-                        <img src="image\newjir.png" alt="Croissant" class="product-image">
-                        <div class="product-details">
-                            <div class="product-name">Croissant</div>
-                            <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                        </div>
-                        <div class="product-price">Rp 18.000,00</div>
-                    </div>
-                    <div class="product-item">
-                        <img src="image\newjir.png" alt="Croissant" class="product-image">
-                        <div class="product-details">
-                            <div class="product-name">Croissant</div>
-                            <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                        </div>
-                        <div class="product-price">Rp 18.000,00</div>
-                    </div>
+                    <?php   
+                        $total = ($cart['harga'] * $cart['quantity']);
+                        }
+                    }
+                    ?>
                 </div>
             </div>
 
@@ -138,7 +127,7 @@
                 <div class="card order-summary">
                     <div class="summary-row">
                         <div class="summary-label">Sub Total</div>
-                        <div class="summary-value">Rp 124.000,00</div>
+                        <div class="summary-value">Rp <?= $grandTotal += $total; ?></div>
                     </div>
                     <div class="summary-row">
                         <div class="summary-label">Biaya Pengiriman</div>
@@ -147,7 +136,7 @@
                     <div class="summary-divider"></div>
                     <div class="summary-row">
                         <div class="summary-label summary-total">Total</div>
-                        <div class="summary-value summary-total">Rp 124.000,00</div>
+                        <div class="summary-value summary-total">Rp <?= $grandTotal ?></div>
                     </div>
                     <button class="checkout-btn">Pesan Sekarang</button>
                 </div>

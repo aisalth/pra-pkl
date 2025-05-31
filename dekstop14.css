@@ -484,3 +484,45 @@ input[type="checkbox"] {
         text-align: center;
     }
 }
+
+.checkout-btn:active{
+    opacity: 0.8;
+}
+
+.modal{
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: all 0.3s ease-in-out;
+    z-index: -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.open{
+    opacity: 1;
+    z-index: 999;
+}
+
+.modal-inner{
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 4px black;
+    padding: 15px 25px;
+    text-align: center;
+    width: 380px;
+}
+
+.modal-inner h2{
+    margin: 0;
+}
+
+.modal-inner p{
+    line-height: 24px;
+    margin: 10px 0;
+}
