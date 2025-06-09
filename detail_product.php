@@ -1,3 +1,8 @@
+<?php
+    include "koneksi.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +12,7 @@
     src="https://kit.fontawesome.com/bd5eaea774.js" 
     crossorigin="anonymous">
     </script>
-    <link rel="stylesheet" href="dekstop17.css">
+    <link rel="stylesheet" href="dekstop5.css">
     <title>Document</title>
 </head>
 <body>
@@ -35,68 +40,70 @@
 
     </header>
 
-    <h1>Pesananmu Sudah Di Konfirmasi</h1>
-    
-    <hr class="solid">
-    <p class="confirmation-text">
-        Pesananmu sedang kami proses dan akan segera kami kirimkan ke alamatmu.<br>
-        Terimakasih sudah memesan produk kami
-    </p>
-
-    <a href="dekstop18.html"><button class="view-order-btn">Lihat Pesanan</button></a>
-
-    <h2 class="order-title">Detail Pesanan</h2>
-    <div class="order-details">
-        
-
-        <div class="order-item">
-            <div class="item-details">
-                <img src="image\newjir.png" alt="Croissant" class="item-image">
-                <div class="item-description">
-                    <h3>Croissant</h3>
-                    <i><p>Strawberry Deluxe</p></i>
-                </div>
-            </div>
-            <div class="item-price">Rp 18.000,00</div>
+    <div class="product-container">
+        <?php
+            $id_product = $_GET['detail'];
+            $select_product = mysqli_query($koneksi, "SELECT * FROM products WHERE id_product='$id_product'");
+            if(mysqli_num_rows($select_product) > 0){
+                while($product = mysqli_fetch_assoc($select_product)) {
+        ?>
+        <div class="product-image">
+            <img src="product_image\<?= $product['gambar']; ?>" alt="Croissant">
         </div>
-
-        <div class="order-item">
-            <div class="item-details">
-                <img src="image\newjir.png" alt="Croissant" class="item-image">
-                <div class="item-description">
-                    <h3>Croissant</h3>
-                    <i><p>Strawberry Deluxe</p></i>
-                </div>
+        <div class="product-details">
+            <h1 class="product-ti"><?= $product['nama']; ?></h1>
+            <div class="product-rating">
+                ★★★★☆
             </div>
-            <div class="item-price">Rp 18.000,00</div>
-        </div>
-
-        <div class="order-item">
-            <div class="item-details">
-                <img src="image\newjir.png" alt="Croissant" class="item-image">
-                <div class="item-description">
-                    <h3>Croissant</h3>
-                    <i><p>Strawberry Deluxe</p></i>
-                </div>
+            <div class="product-price">
+                Rp <?= $product['harga']; ?>
             </div>
-            <div class="item-price">Rp 18.000,00</div>
-        </div>
-
-        <div class="order-summary">
-            <div class="summary-row">
-                <span>Sub Total</span>
-                <span>Rp 124.000,00</span>
+            <button class="btn-cart">
+                <div id="cart-btn" class="fas fa-shopping-cart"></div> 
+                <span style="margin-left: 8px;"></span> Add to Cart
+            </button>
+            <div class="horizontal-line"></div>
+            <div class="product-description">
+                <?= $product['deskripsi']; ?>
             </div>
-            <div class="summary-row shipping">
-                <span>Biaya Pengiriman</span>
-                <span class="free-text">FREE!</span>
-            </div>
-            <div class="summary-row total">
-                <span>Total</span>
-                <span>Rp 124.000,00</span>
-            </div>
+            <?php } } ?>
         </div>
     </div>
+
+    <div class="prdk">
+        <div class="pala">
+            <h1>Rekomendasi</h1>
+        </div>
+        
+        <div class="product-carousel">
+                
+            <!-- Product 1 -->
+             <?php
+                $select_product = mysqli_query($koneksi, "SELECT * FROM products LIMIT 5");
+                if(mysqli_num_rows($select_product) > 0){
+                    while($product = mysqli_fetch_assoc($select_product)) {
+            ?>
+            <div class="product-card">
+                <div class="product-title"><?= $product['nama']; ?></div>
+                <img src="product_image\<?= $product['gambar']; ?>" alt="Strawberry Cake" class="product-image">
+                <div class="rating">
+                    <span class="star">★★★★</span>
+                    <span class="star" style="color: #ddd;">★</span>
+                    <div class="price">Rp <?= $product['harga']; ?></div>
+                </div>               
+                <div class="button-group">
+                    <button class="btn-favorite">
+                        <div id="love-btn"><i class="fa-regular fa-heart"></i></div>
+                    </button>
+                    <button class="btn-cart">
+                        <div id="cart-btn" class="fas fa-shopping-cart"></div> 
+                        <span style="margin-left: 8px;"></span> Add to Cart
+                    </button>
+                </div>
+            </div>
+            <?php } } ?>
+            
+                </div>
 
     <footer class="footer">
         <div class="footer-container">
@@ -133,7 +140,7 @@
             2025 Copyright PASTRY CORNER. All Right Reserved
         </div>
     </footer> 
-    
-        <script src="dekstop17.js"></script>
+
+    <script src="dekstop5.js"></script>
 </body>
 </html>

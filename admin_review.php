@@ -1,14 +1,26 @@
+<?php
+    include "koneksi.php";
+
+    if(isset($_GET['delete'])){
+        $delete_id = $_GET['delete'];
+        $delete_order = mysqli_query($koneksi, "DELETE FROM review WHERE id_review = '$delete_id'");
+        header('location:admin_review.php');
+        $message[] = 'Data berhasil dihapus'; 
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <script 
     src="https://kit.fontawesome.com/bd5eaea774.js" 
     crossorigin="anonymous">
     </script>
-    <link rel="stylesheet" href="dekstop24.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet">
+    <link rel="stylesheet" href="dekstop25,4.css">
     <title>Document</title>
 </head>
 <body>
@@ -45,6 +57,8 @@
                 <i class="fas fa-chevron-right arrow"></i>
             </a>
         </div>
+
+        <!-- Profile section with dropdown -->
         <div class="sidebar-footer">
             <div class="admin-profile" id="admin-profile">
                 <div class="admin-avatar">
@@ -55,7 +69,8 @@
                     <div class="admin-role">Admin</div>
                 </div>
                 <i class="fas fa-chevron-down arrow"></i>
-
+                
+                <!-- Dropdown Menu -->
                 <div class="profile-dropdown" id="profile-dropdown">
                     <button class="dropdown-item" onclick="editProfile()">
                         <i class="fas fa-user-edit"></i>
@@ -127,61 +142,56 @@
         <!-- Placeholder for additional content that will come later -->
         <div id="additional-content-area"></div>
     
-
-    <!-- Customer Table Section -->
-    <div class="customers-sectionpes">
-        <div class="customers-header">
-            <h2 class="customers-title">Pesan</h2>
-            <div class="customers-search-sort">
-                <div class="customers-search">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search">
-                </div>
-                <div class="sort-dropdown">
-                    <span>Short by:</span>
-                    <select id="sort-select">
-                        <option value="newest">Newest</option>
-                        <option value="oldest">Oldest</option>
-                        <option value="name-asc">Name (A-Z)</option>
-                        <option value="name-desc">Name (Z-A)</option>
-                    </select>
+        <!-- Customer Table Section -->
+        <div class="customers-sectionpes">
+            <div class="customers-header">
+                <h2 class="customers-title">Review</h2>
+                <div class="customers-search-sort">
+                    <div class="customers-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search">
+                    </div>
+                    <div class="sort-dropdown">
+                        <span>Short by:</span>
+                        <select id="sort-select">
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="name-asc">Name (A-Z)</option>
+                            <option value="name-desc">Name (Z-A)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+            <table class="customers-table">
+                <thead>
+                    <tr>
+                        <th>Nama Pelanggan</th>
+                        <th>Username</th>
+                        <th>Review</th>
+                        <th>Tanggal Kirim</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <?php
+                            $select_review = mysqli_query($koneksi, "SELECT id_review, nama, username, pesan, tanggal FROM user JOIN review ON user.id_user = review.id_user");
+                            while($review = mysqli_fetch_assoc($select_review)){
+                        ?>
+                    <tr>
+                        <td><?= $review['nama']; ?></td>
+                        <td><?= $review['username']; ?></td>
+                        <td><?= $review['pesan']; ?></td>
+                        <td><?= $review['tanggal']; ?></td>
+                        <td><a href="admin_review.php?delete=<?= $review['id_review']; ?>" class="delete-btn" onclick="return confirm('Hapus pesanan ini?');">Hapus</a></td>
+                    </tr>
+                        <?php } ?>
+                </tbody>
+            </table>
         </div>
-        <table class="customers-table">
-            <thead>
-                <tr>
-                    <th>Nama Pelanggan</th>
-                    <th>Nomor Telepon</th>
-                    <th>Email</th>
-                    <th>Pesan</th>
-                    <th>Tanggal Pembuatan</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Aisyah</td>
-                    <td>083444444444</td>
-                    <td>Aisyah@gmail</td>
-                    <td>Lorem Ipsum</td>
-                    <td>18-03-2021</td>
-                    
-                </tr>
-                <tr>
-                    <td>Keysha</td>
-                    <td>08666666666</td>
-                    <td>Key@gmail</td>
-                    <td>Lorem Ipsum</td>
-                    <td>23-03-2022</td>
-                    
-                </tr>
-                <!-- More rows can be added dynamically via JavaScript -->
-            </tbody>
-        </table>
     </div>
-</div>
 
-<div class="modal-overlay" id="editProfileModal">
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Profile</h3>
@@ -252,7 +262,7 @@
         </div>
     </div>
 </div>
-
-    <script src="dekstop24.js"></script>
+    
+    <script src="dekstop25,4.js"></script>
 </body>
 </html>

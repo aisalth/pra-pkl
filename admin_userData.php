@@ -1,17 +1,31 @@
+<?php
+    include "koneksi.php";
+
+    if(isset($_GET['delete'])){
+        $delete_id = $_GET['delete'];
+        $delete_order = mysqli_query($koneksi, "DELETE FROM user WHERE id_user = '$delete_id'");
+        header('location:admin_user.php');
+        $message[] = 'data berhasil dihapus';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <script 
     src="https://kit.fontawesome.com/bd5eaea774.js" 
     crossorigin="anonymous">
     </script>
-    <link rel="stylesheet" href="dekstop24.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet">
+    <link rel="stylesheet" href="dekstop19.css">
     <title>Document</title>
 </head>
 <body>
+    
+
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>Dashboard</h2>
@@ -26,7 +40,7 @@
                 <span class="menu-item-text">Produk</span>
                 <i class="fas fa-chevron-right arrow"></i>
             </a>
-            <a href="dekstop19,3.html" class="menu-item">
+            <a href="dekstop19,3.html" class="menu-item ">
                 <i class="far fa-user"></i>
                 <span class="menu-item-text">Pelanggan</span>
                 <i class="fas fa-chevron-right arrow"></i>
@@ -56,6 +70,7 @@
                 </div>
                 <i class="fas fa-chevron-down arrow"></i>
 
+                <!-- Dropdown Menu -->
                 <div class="profile-dropdown" id="profile-dropdown">
                     <button class="dropdown-item" onclick="editProfile()">
                         <i class="fas fa-user-edit"></i>
@@ -131,7 +146,7 @@
     <!-- Customer Table Section -->
     <div class="customers-sectionpes">
         <div class="customers-header">
-            <h2 class="customers-title">Pesan</h2>
+            <h2 class="customers-title">Pelanggan</h2>
             <div class="customers-search-sort">
                 <div class="customers-search">
                     <i class="fas fa-search"></i>
@@ -152,36 +167,35 @@
             <thead>
                 <tr>
                     <th>Nama Pelanggan</th>
+                    <th>Username</th>
                     <th>Nomor Telepon</th>
                     <th>Email</th>
-                    <th>Pesan</th>
-                    <th>Tanggal Pembuatan</th>
+                    <th>Role</th>
                 </tr>
             </thead>
             <tbody>
+                <?php
+                    $select_user = mysqli_query($koneksi, "SELECT * FROM user");
+                    while($user = mysqli_fetch_assoc($select_user)){
+                ?>
                 <tr>
-                    <td>Aisyah</td>
-                    <td>083444444444</td>
-                    <td>Aisyah@gmail</td>
-                    <td>Lorem Ipsum</td>
-                    <td>18-03-2021</td>
-                    
+                <form action="" method="post">
+                    <td><?= $user['nama']; ?></td>
+                    <td><?= $user['username']; ?></td>
+                    <td><?= $user['no_telp']; ?></td>
+                    <td><?= $user['email']; ?></td>
+                    <td><?= $user['role']; ?></td>
+                    <td><a href="admin_order.php?delete=<?= $user['id_user']; ?>" class="delete-btn" onclick="return confirm('Hapus pesanan ini?');">Hapus</a></td>
+                </form>
                 </tr>
-                <tr>
-                    <td>Keysha</td>
-                    <td>08666666666</td>
-                    <td>Key@gmail</td>
-                    <td>Lorem Ipsum</td>
-                    <td>23-03-2022</td>
-                    
-                </tr>
-                <!-- More rows can be added dynamically via JavaScript -->
+                <?php } ?>
             </tbody>
         </table>
     </div>
 </div>
 
-<div class="modal-overlay" id="editProfileModal">
+<!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editProfileModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Profile</h3>
@@ -253,6 +267,6 @@
     </div>
 </div>
 
-    <script src="dekstop24.js"></script>
+        <script src="dekstop19.js"></script>
 </body>
 </html>

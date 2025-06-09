@@ -1,6 +1,11 @@
 <?php
+    session_start();
     include "koneksi.php";
+    $id_user = $_SESSION['id_user'];
 
+    if(!isset($id_user)){
+        header('location:login.php');
+    }
 
     if(isset($_POST['update_qty'])){
         $id_product = $_POST['id_product'];
@@ -35,15 +40,16 @@
         <a href="" class="logo"><img src="c:\Users\ASUS\Downloads\222.png" ></a>
         <nav class="navbar">
             <a href="index.html#home">Beranda</a>
-            <a href="index.html#topdecoration">Produk</a>
-            <a href="index.html#sout">Tentang</a>
+            <a href="product.php">Produk</a>
+            <a href="tentang.html">Tentang</a>
             <a href="index.html#testimonial-section">Review</a>
-            <a href="index.html#neks">Kontak</a>
+            <a href="dekstop4.html">Kontak</a>
+            
         </nav>
         <div class="icons">
-           <div id="user-icon"><i class="fa-regular fa-circle-user"></i></div>
-           <div id="heart-icon"><i class="fa-regular fa-heart"></i></div>
-           <div id="shopping-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+           <a href=""><div id="user-icon"><i class="fa-regular fa-circle-user"></i></div></a>
+           <a href="wishlist.php"><div id="heart-icon"><i class="fa-regular fa-heart"></i></div></a>
+           <a href="cart.php"><div id="shopping-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div></a>
            <div id="search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
            <div id="menu-btn"><i class="fa-solid fa-bars"></i></div>
         </div>

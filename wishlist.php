@@ -1,3 +1,14 @@
+<?php
+    session_start();
+    include "koneksi.php";
+
+    $id_user = $_SESSION['id_user'];
+
+    if(!isset($id_user)){
+        header('location:login.php');
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,14 +57,17 @@
         <div class="product-carousel">
             
             
-            <!-- Product 1 -->
+            <?php
+                $select_fav = mysqli_query($koneksi, "SELECT * FROM wishlist");
+                while($fav = mysqli_fetch_assoc($select_fav)){
+            ?>
             <div class="product-card">
-                <div class="product-title">Mille-Feuille</div>
-                <img src="image\j.png" alt="Strawberry Cake" class="product-image">
+                <div class="product-title"><?= $fav['nama']; ?></div>
+                <img src="product_image\<?= $fav['gambar']; ?>" alt="Strawberry Cake" class="product-image">
                 <div class="rating">
                     <span class="star">★★★★</span>
                     <span class="star" style="color: #ddd;">★</span>
-                    <div class="price">Rp 180.000,00</div>
+                    <div class="price">Rp <?= $fav['harga']; ?></div>
                 </div>               
                 <div class="button-group">
                     <button class="btn-favorite">
@@ -65,47 +79,7 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Product 2 -->
-            <div class="product-card">
-                <div class="product-title">Danish Pastry</div>
-                <img src="image\p.png" alt="Strawberry Cake" class="product-image">
-                <div class="rating">
-                    <span class="star">★★★★</span>
-                    <span class="star" style="color: #ddd;">★</span>
-                    <div class="price">Rp 180.000,00</div>
-                </div>
-                <div class="button-group">
-                    <button class="btn-favorite">
-                        <div id="love-btn"><i class="fa-regular fa-heart"></i></div>
-                    </button>
-                    <button class="btn-cart">
-                        <div id="cart-btn" class="fas fa-shopping-cart"></div> 
-                        <span style="margin-left: 8px;"></span> Add to Cart
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Product 3 (Active Product) -->
-            <div class="product-card ">
-                <div class="product-title">Croissant</div>
-                <img src="image\ccl.png" alt="Choco Lava Croissant" class="product-image">
-                <div class="rating">
-                    <span class="star">★★★★</span>
-                    <span class="star" style="color: #ddd;">★</span>
-                    <div class="price">Rp 180.000,00</div>
-                </div>             
-                <div class="button-group">
-                    <button class="btn-favorite">
-                        <div id="love-btn"><i class="fa-regular fa-heart"></i></div>
-                    </button>
-                    <button class="btn-cart">
-                        <div id="cart-btn" class="fas fa-shopping-cart"></div> 
-                        <span style="margin-left: 8px;"></span> Add to Cart
-                    </button>
-                </div>
-            </div>
-        </div>
+            <?php } ?>
               
 </div>
 

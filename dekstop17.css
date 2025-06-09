@@ -413,3 +413,69 @@ h1 {
         text-align: center;
     }
 }
+
+.order-summary {
+    flex: 2;
+    background-color: #F6F6F6;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 105px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    color: #6B4E3E;
+    font-family: Poppins;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-weight: bold;
+    font-size: 18px;
+    color: #6B4E3E;
+    font-family: Poppins;
+}
+
+.product-name {
+    color: #6B4E3E;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-family: Poppins;
+}
+
+.address-box {
+    background-color: #E6E6E6;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.address-box p {
+    margin: 5px 0;
+    color: #5E5344;
+    font-size: 14px;
+    font-family: Poppins;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #887964;
+}
+
+.garis-horizontal {
+    border: none; /* Menghapus border default */
+    height: 1px; /* Mengatur ketebalan garis */
+    background-color: #887964; /* Mengatur warna garis */
+    width: 500px; /* Mengatur lebar garis, bisa diubah sesuai kebutuhan */
+     /* Mengatur posisi garis ke tengah */
+     margin-bottom: 10px;
+}

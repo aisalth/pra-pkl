@@ -219,6 +219,7 @@
 
 .checkout-layout {
     display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
@@ -410,7 +411,7 @@
     color: #6B4E3E;
 }
 
-.checkout-btn {
+.checkout_btn {
     background-color: #887964;
     color: white;
     border: none;
@@ -773,11 +774,42 @@
         text-align: center;
     }
 }
-
-.detail-customer{
+.modal-inner{
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: Poppins;
-    color: #5D5344;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #F6F6F6;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
 }
+
+.modal-inner form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-inner label {
+    color: #5E5344;
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.modal-inner input[type="text"],
+.modal-inner input[type="number"] {
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.modal-inner input[type="text"]:focus,
+.modal-inner input[type="number"]:focus {
+    border-color: #887964;
+    outline: none;
+}
+

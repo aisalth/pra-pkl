@@ -1,5 +1,12 @@
 <?php
+    session_start();
     include "koneksi.php";
+
+    $id_user = $_SESSION['id_user'];
+
+    if(!isset($id_user)){
+        header('location:login.php');
+    }
     
     if(isset($_POST['add_to_cart'])){
         $nama = $_POST['nama'];
@@ -22,21 +29,21 @@
      
 
 
-    // if(isset($_POST['add_to_fav'])){
-    //     $name = $_POST['name'];
-    //     $price = $_POST['price'];
-    //     $image = $_POST['image'];
-    //     $product_quantity = 1;
+    if(isset($_POST['add_to_fav'])){
+        $nama = $_POST['nama'];
+        $harga = $_POST['harga'];
+        $gambar = $_POST['gambar'];
+        $id_product = $_POST['id_product'];
 
-    //     $select_cart = mysqli_query($koneksi, "SELECT * FROM cart WHERE name = '$name'");
+        $select_fav = mysqli_query($koneksi, "SELECT * FROM wishlist WHERE id_product = '$id_product'");
 
-    //     if(mysqli_num_rows($select_cart) > 0){
-    //         $message[] = "Produk akan ditambahkan ke keranjang";
-    //     } else{
-    //         $insert_product = mysqli_query($koneksi, "INSERT INTO wishlist(name, price, quantity, image) VALUES('$name', '$price', '$product_quantity', '$image')") ;
-    //         $message = "Produk telah ditambahkan ke favorite";
-    //     }
-    // }
+        if(mysqli_num_rows($select_fav) > 0){
+            $message[] = "Produk akan ditambahkan ke wishlist";
+        } else{
+            $insert_product = mysqli_query($koneksi, "INSERT INTO wishlist(nama, harga, gambar, id_product) VALUES('$nama', '$harga', '$gambar', '$id_product')") ;
+            $message = "Produk telah ditambahkan ke wishlist";
+        }
+    }
 
 
 
@@ -63,18 +70,16 @@
         
         <nav class="navbar">
             <a href="index.html#home">Beranda</a>
-            <a href="index.html#topdecoration">Produk</a>
-            <a href="index.html#sout">Tentang</a>
+            <a href="product.php">Produk</a>
+            <a href="tentang.html">Tentang</a>
             <a href="index.html#testimonial-section">Review</a>
-            <a href="index.html#neks">Kontak</a>
+            <a href="dekstop4.html">Kontak</a>
+            
         </nav>
-    
         <div class="icons">
-           <div id="user-icon"><i class="fa-regular fa-circle-user"></i></div>
-           <!--ini icon heart-->
-           <a href="dekstop13.html"><div id="heart-icon"><i class="fa-regular fa-heart"></i></div></a>
-           <!--ini icon keranjang-->
-           <a href="dekstop14.html"><div id="shopping-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div></a>
+           <a href=""><div id="user-icon"><i class="fa-regular fa-circle-user"></i></div></a>
+           <a href="wishlist.php"><div id="heart-icon"><i class="fa-regular fa-heart"></i></div></a>
+           <a href="cart.php"><div id="shopping-cart-icon"><i class="fa-solid fa-cart-shopping"></i></div></a>
            <div id="search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
            <div id="menu-btn"><i class="fa-solid fa-bars"></i></div>
         </div>
@@ -181,6 +186,7 @@
             ?>
             <div class="product-area">
             <form action="" method="POST">
+                <a href="detail_product.php?detail=<?= $product['id_product']; ?>" class="option-btn>
                 <input type="hidden" name="id_product" value="<?= $product['id_product'] ?>">
                 <input type="hidden" name="gambar" value="<?= $product['gambar'] ?>">
                 <input type="hidden" name="nama" value="<?= $product['nama'] ?>">
@@ -194,7 +200,7 @@
                             </div>               
                             <div class="button-group">
                                 <button class="btn-favorite">
-                                    <div id="love-btn"><i class="fa-regular fa-heart"><input type="hidden" name="add_to_fav"></i></div>
+                                    <input type="submit" name="add_to_fav" value="♡" id="love-btn">
                                 </button>
                                     <!-- <input type="submit" class="btn-cart" value="Add to Cart" style="margin-left: 8px;">
                                     <div id="cart-btn" class="fas fa-shopping-cart"></div> -->
@@ -202,6 +208,7 @@
                                     <!-- <div id="cart-btn" class="fas fa-shopping-cart"></div> -->
                                 </input>
                             </div>
+                </a>
                </form>                    
             </div>  
             </div>

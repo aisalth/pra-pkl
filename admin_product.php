@@ -5,18 +5,12 @@
         if(isset($_POST['add_product'])){
 
         $nama = $_POST['nama'];
-        $nama = filter_var($nama, FILTER_SANITIZE_STRING);
         $harga = $_POST['harga'];
-        $harga = filter_var($harga, FILTER_SANITIZE_STRING);
         $stok = $_POST['stok'];
-        $stok = filter_var($stok, FILTER_SANITIZE_STRING);
-        $kategori = $_POST['kategori'];
-        $kategori = filter_var($kategori, FILTER_SANITIZE_STRING);
+        $id_kategori = $_POST['id_kategori'];
         $deskripsi = $_POST['deskripsi'];
-        $deskripsi = filter_var($deskripsi, FILTER_SANITIZE_STRING);
 
         $gambar = $_FILES['gambar']['name'];
-        $gambar = filter_var($gambar, FILTER_SANITIZE_STRING);
         $gambar_size = $_FILES['gambar']['size'];
         $gambar_tmp_name = $_FILES['gambar']['tmp_name'];
         $gambar_folder = 'product_image/'.$gambar;
@@ -27,7 +21,7 @@
             $message[] = 'nama produk sudah ada!';
         }else{
 
-            $insert_products = mysqli_query($koneksi, "INSERT INTO products(gambar, nama, harga, stok, deskripsi, kategori) VALUES('$gambar', '$nama', '$harga', '$stok', '$deskripsi', '$kategori')");
+            $insert_products = mysqli_query($koneksi, "INSERT INTO products(gambar, nama, harga, stok, deskripsi, id_kategori) VALUES('$gambar', '$nama', '$harga', '$stok', '$deskripsi', '$id_kategori')");
 
             if($insert_products){
                 if($gambar_size > 2000000){
@@ -216,7 +210,7 @@ include "message_alert.php";
             </thead>
             <tbody>
                 <?php
-                    $select_products = mysqli_query($koneksi, "SELECT * FROM products");
+                    $select_products = mysqli_query($koneksi, "SELECT id_product, nama, gambar, harga, deskripsi, stok, kategori from products join kategori on products.id_kategori = kategori.id_kategori");
                     while($product = mysqli_fetch_assoc($select_products)){ 
                 ?>
                 <form action="" method="post">
@@ -228,7 +222,7 @@ include "message_alert.php";
                     <td><?= $product['deskripsi'] ?></td>
                     <td><?= $product['harga'] ?></td>
                     <td><?= $product['stok'] ?></td>
-                    <td>><div class="flex-btn">
+                    <td><div class="flex-btn">
                         <a href="update_product.php?update=<?= $product['id_product']; ?>" class="option-btn">Perbarui</a>
                         <a href="admin_product.php?delete=<?= $product['id_product']; ?>" class="delete-btn" onclick="return confirm('hapus produk ini?');">Hapus</a>
                     </div></td
@@ -263,11 +257,13 @@ include "message_alert.php";
             <textarea name="deskripsi" id=""></textarea>
          </div>
          <label for="">kategori</label>
-         <select name="kategori" id="cars">
-            <option value="croissant">croissant</option>
-            <option value="fleur">Saab</option>
-            <option value="choux">Mercedes</option>
-            <option value="audi">Audi</option>
+         <select name="id_kategori" id="cars">
+            <?php
+                $select_kategori = mysqli_query($koneksi, "SELECT * from kategori");
+                while($kategori = mysqli_fetch_assoc($select_kategori)){ 
+            ?>
+            <option value="<?= $kategori['id_kategori']; ?>"><?= $kategori['kategori']; ?></option>
+            <?php } ?>
          </select>
         <div class="inputBox">
             <span>gambar (wajib)</span>

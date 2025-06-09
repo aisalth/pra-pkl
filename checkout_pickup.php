@@ -1,6 +1,31 @@
 <?php
+    session_start();
     include "koneksi.php";
 
+    $id_user = $_SESSION['id_user'];
+
+    if(!isset($id_user)){
+        header('location:login.php');
+    }
+    
+    if(isset($_POST['checkout_btn'])){
+        $total_harga = $_POST['total_harga'];
+        $total_products = $_POST['total_products'];
+        $customer = $_POST['nama'].' - '.$_POST['no_telp'].' - '.$_POST['waktu'];
+        $tipe_pesanan = "pickup";
+
+        $query = mysqli_query($koneksi, "INSERT INTO pesanan (id_user, tanggal_order, total_harga, total_product, customer, tipe_pesanan) VALUES ('$id_user', NOW(), '$total_harga', '$total_products', '$customer', '$tipe_pesanan')");
+        
+        if($query){
+            // Ambil ID pesanan yang baru saja dibuat
+            $id_pesanan = mysqli_insert_id($koneksi);
+            $message[] = 'Pesanan berhasil! Silahkan melakukan pembayaran';
+            header("location:payment.php?id_pesanan=" . $id_pesanan);
+            exit();
+        } else {
+            $message[] = 'Terjadi kesalahan, silahkan coba lagi';
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -69,76 +94,70 @@
                     </div>
                 </div>
 
-                <div class="card">
                     <div class="detail-customer">
-                        <div class="payment-title">Detail Customer</div>
-                        <div class="editBtn" id="editBtn"><Edit</div>
+                        <div class="payment-title">Informasi Pemesan</div>
                     </div>
-
-                    <div class="edit-detail">
-                        <div class="inner-edit">
-                            <form action="">
-                                <input type="hidden" name="">
-                                <label for="">Nama</label>
-                                <input type="text">
-                                <label for="">Nomor HandPhone</label>
-                                <input type="number" name="" id="">
-                                <label for="">Email</label>
-                                <input type="text">
-                            </form>
+                    <form action="" method="post">
+                        <div class="modal-inner">
+                            <label for="">Nama</label>
+                            <input type="text" name="nama" required>
+                            <label for="">Nomor HandPhone</label>
+                            <input type="number" name="no_telp" required>
+                            <label for="">Waktu Pengambilan</label>
+                            <input type="time" name="waktu" required>
+                        </div>  
+                        <div class="card product-section">
+                            <h2>Produk</h2>
+                            <?php
+                            $grandTotal = 0;
+                            $cart_items = array();
+                            $select_cart = mysqli_query($koneksi, "SELECT * FROM cart");
+                            if(mysqli_num_rows($select_cart) > 0){
+                                while($cart = mysqli_fetch_assoc($select_cart)){
+                            ?>
+                            <div class="product-item">
+                                <img src="product_image/<?= $cart['gambar']; ?>" alt="<?= $cart['nama']; ?>" class="product-image">
+                                <div class="product-details">
+                                    <div class="product-name"><?= $cart['nama']; ?></div>
+                                    <div class="product-variant"><i></i></div>
+                                </div>
+                                <div class="product-price"><?= $cart['harga']; ?></div>
+                                <div class="product-quantity"><?= $cart['quantity']; ?></div>
+                            </div>
+                            <?php   
+                                $cart_items[] = $cart['nama'].' ('.$cart['harga'].' x '. $cart['quantity'].') - ';
+                                $total = ($cart['harga'] * $cart['quantity']);
+                                $grandTotal += $total;
+                                }
+                            } else {
+                                echo "<p>Keranjang kosong</p>";
+                            }
+                            $total_products = implode($cart_items);
+                            ?>
+                            </div>
+                            <div class="checkout-right">
+                                <div class="card order-summary">
+                                    <div class="summary-row">
+                                        <div class="summary-label">Sub Total</div>
+                                        <div class="summary-value">Rp <?= number_format($grandTotal, 0, ',', '.'); ?></div>
+                                    </div>
+                                    <div class="summary-divider"></div>
+                                    <div class="summary-row">
+                                        <div class="summary-label summary-total">Total</div>
+                                        <input type="hidden" name="total_products" value="<?= $total_products; ?>">
+                                        <input type="hidden" name="total_harga" value="<?= $grandTotal ?>">
+                                        <div class="summary-value summary-total">Rp <?= number_format($grandTotal, 0, ',', '.'); ?></div>
+                                    </div>
+                                    <?php if($grandTotal > 0): ?>
+                                    <input type="submit" name="checkout_btn" value="Pesan Sekarang" class="checkout_btn">
+                                    <?php else: ?>
+                                    <p>Silahkan tambahkan produk ke keranjang terlebih dahulu</p>
+                                    <?php endif; ?>
+                                </div>
                         </div>
+                    </form>
                     </div>
 
-                    <div class="store-address">
-                        <div>
-                            <span class="store-name">Aisyah</span>
-                            <span class="store-phone"> | +628384664382</span>
-                        </div>
-                        <div class="store-location">aisyahfunis@gmail.com</div>
-                    </div>
-                </div>
-
-                <div class="card product-section">
-                    <h2>Produk</h2>
-                    <?php
-                    $grandTotal = 0;
-                    $select_cart = mysqli_query($koneksi, "SELECT * FROM cart");
-                    if(mysqli_num_rows($select_cart) > 0){
-                        while($cart = mysqli_fetch_assoc($select_cart)){
-                    ?>
-                    <div class="product-item">
-                        <img src="product_image/<?= $cart['gambar']; ?>" alt="Croissant" class="product-image">
-                        <div class="product-details">
-                            <div class="product-name"><?= $cart['nama']; ?></div>
-                            <div class="product-variant"><i></i></div>
-                        </div>
-                        <div class="product-price"><?= $cart['harga']; ?></div>
-                        <div class="product-quantity"><?= $cart['quantity']; ?></div>
-                    </div>
-                    <?php   
-                        $total = ($cart['harga'] * $cart['quantity']);
-                        }
-                    }
-                    ?>
-                </div>
-            </div>
-
-            <div class="checkout-right">
-                <div class="card order-summary">
-                    <div class="summary-row">
-                        <div class="summary-label">Sub Total</div>
-                        <div class="summary-value">Rp <?= $grandTotal += $total; ?></div>
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-label">Biaya Pengiriman</div>
-                        <div class="summary-value free-shipping">FREE!</div>
-                    </div>
-                    <div class="summary-divider"></div>
-                    <div class="summary-row">
-                        <div class="summary-label summary-total">Total</div>
-                        <div class="summary-value summary-total">Rp <?= $grandTotal ?></div>
-                    </div>
-                    <button class="checkout-btn">Pesan Sekarang</button>
                 </div>
             </div>
         </div>
