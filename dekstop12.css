@@ -235,8 +235,8 @@
 
 .upload-profile {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
 .profile-info {
@@ -274,19 +274,34 @@
     font-weight: 550;
 }
 
-.upload-btn {
-    background-color: #ffffff;
-    border: 1px solid #8a7055;
-    color: #8a7055;
-    border-radius: 15px;
-    padding: 8px 60px;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 6px 9px rgba(0, 0, 0, 0.1);
+.gambar{
+    width: 0,1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	
+	z-index: 111;
 }
 
-.upload-btn:hover {
+.gambar + label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #5E5344;
+    background-color: white;
+    border-radius: 25px;
+    border: 1px solid #887964;
+    padding: 15px;
+    display: inline-block;
+    position: relative;
+}
+
+.gambar:focus + label,
+.gambar + label:hover {
     background-color: #f8f8f8;
+}
+
+.gambar + label {
+	cursor: pointer; /* "hand" cursor */
 }
 
 /* Responsive design */
@@ -703,3 +718,4 @@ input:focus, textarea:focus {
         text-align: center;
     }
 }
+

@@ -1,6 +1,14 @@
 <?php
-    session_start();
+    
     include "koneksi.php";
+
+    session_start();
+
+    if (isset($id_user)) {
+        $id_user = $_SESSION['id_user'];
+    } else{
+        $id_user = '';
+    };
 
 ?>
 

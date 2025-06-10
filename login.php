@@ -29,17 +29,17 @@
   }
 
   if(isset($_POST['sign_up'])){
-    $nama = $_POST['nama'];    
+    $username = $_POST['username'];    
     $email = $_POST['email'];   
     $password = $_POST['password']; 
     
     // Query tanpa sanitasi - rentan SQL injection
-    $check_user = mysqli_query($koneksi, "SELECT * FROM user WHERE username = '$email' OR email = '$email'");
+    $check_user = mysqli_query($koneksi, "SELECT * FROM user WHERE username = '$username' OR email = '$email'");
     
     if(mysqli_num_rows($check_user) > 0){
-      $message[] = 'User already exists!';
+      $message[] = 'Username/email telah digunakan! Silahkan gunakan username/email lain';
     } else {
-      $insert_query = mysqli_query($koneksi, "INSERT INTO user (nama, email, username, password, role) VALUES ('$nama', '$email', '$email', '$password', 'cust')");
+      $insert_query = mysqli_query($koneksi, "INSERT INTO user (email, username, password, role) VALUES ('$email', '$username', '$password', 'cust')");
       
       if($insert_query){
         $message[] = 'Account created successfully!';
@@ -66,6 +66,7 @@
     <title>Login Page</title>
 </head>
 <body>
+  <?php include "message_alert.php"; ?>
     <?php
     if(isset($message)){
       foreach($message as $msg){
@@ -79,8 +80,8 @@
         <div class="sign-up">
           <form action=""  method="post">
             <h1>Buat Akun</h1>
-            <label class="nam">Nama</label>
-            <input type="text" id="signup-nama" class="typewriter" name="nama" required />
+            <label class="nam">Username</label>
+            <input type="text" id="signup-nama" class="typewriter" name="username" required />
             <label class="ema">Email</label>
             <input type="email" id="signup-email" class="typewriter" name="email" required />
             <label class="pas">Password</label>
