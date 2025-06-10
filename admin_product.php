@@ -45,8 +45,7 @@
    unlink('product_image/'.$fetch_delete_image['gambar']);
    $delete_product = mysqli_query($koneksi, "DELETE FROM products WHERE id_product = '$delete_id'");
    $delete_cart =  mysqli_query($koneksi, "DELETE FROM products WHERE id_product = '$delete_id'");
-//    $delete_wishlist = $conn->prepare("DELETE FROM wishlist WHERE pid = ?");
-//    $delete_wishlist->execute([$delete_id]);
+    $delete_wishlist = mysqli_query($koneksi, "DELETE FROM wishlist WHERE id_product = '$delete_id'");;
    header('location:admin_product.php');
 }
 

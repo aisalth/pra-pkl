@@ -125,6 +125,11 @@ $order_data = mysqli_fetch_assoc($result_order);
                     <div class="address-box">
                         <p><strong>Informasi Pemesan:</strong></p>
                         <p><?= htmlspecialchars($order_data['customer']); ?></p>
+                        <?php
+                        if($order_data['tipe_pesanan'] == "delivery"){
+                        ?>
+                        <p><strong>Alamat:</strong> <?= ucfirst($order_data['alamat']); ?></p>
+                        <?php } ?>
                         <p><strong>Tipe Pesanan:</strong> <?= ucfirst($order_data['tipe_pesanan']); ?></p>
                         <p><strong>Tanggal Pesanan:</strong> <?= date('d/m/Y H:i', strtotime($order_data['tanggal_order'])); ?></p>
                     </div>

@@ -63,3 +63,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+const openBtn = document.getElementById("openModal");
+const closeBtn = document.getElementById("closeModal");
+const modal = document.getElementById("modal");
+
+openBtn.addEventListener("click", () => {
+    modal.classList.add("open");
+});
+
+closeBtn.addEventListener("click", () => {
+    modal.classList.remove("open");
+});
+
+document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                selectedShippingCost = parseInt(this.value);
+                
+                // Update biaya pengiriman display
+                document.getElementById('shippingCost').textContent = formatCurrency(selectedShippingCost);
+                document.getElementById('shippingCostRow').style.display = 'flex';
+                
+                // Update total
+                updateTotal();
+                
+                // Update shipping info
+                const shippingInfo = document.getElementById('shippingInfo');
+                const selectedLabel = this.nextElementSibling.textContent;
+                shippingInfo.innerHTML = `<strong>Metode Pengiriman:</strong> ${selectedLabel}`;
+                shippingInfo.classList.add('active');
+                
+                // Update button
+                document.querySelector('.checkout-btn').textContent = 'Pesan Sekarang';
+                document.querySelector('.checkout-btn').style.backgroundColor = '#8B6F47';
+            });
+        });
+
+        // Process checkout
+        function processCheckout() {
+            if (selectedShippingCost === 0) {
+                alert('Silakan pilih metode pengiriman terlebih dahulu!');
+                return;
+            }
+        }

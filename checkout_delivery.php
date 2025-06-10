@@ -1,3 +1,43 @@
+<?php
+    session_start();
+    include "koneksi.php";
+
+    $id_user = $_SESSION['id_user'];
+
+    if(!isset($id_user)){
+        header('location:login.php');
+    }
+
+    // Proses checkout
+    if(isset($_POST['checkout_btn'])){
+        $nama = $_POST['nama'];
+        $no_telp = $_POST['no_telp'];
+        $detail = $_POST['detail'];
+        $desa = $_POST['desa'];
+        $kecamatan =  $_POST['kecamatan'];
+        $kbp = $_POST['kbp'];
+        $total_products = $_POST['total_products'];
+       $total_harga = $_POST['total_harga'];
+        $shipping_cost = $_POST['shipping'];
+        $grand_total = $total_harga + $shipping_cost;
+        $tipe_pesanan = "delivery";
+        
+        $alamat = $detail . ', ' . $desa . ', ' . $kecamatan . ', ' . $kbp;
+        $customer = $nama . ', ' . $no_telp;
+        
+        $insert_order = mysqli_query($koneksi, "INSERT INTO pesanan (id_user, tanggal_order, total_harga, total_product, customer, alamat, tipe_pesanan) VALUES ('$id_user', now(), '$grand_total', '$total_products', '$customer', '$alamat', '$tipe_pesanan')");
+        
+        if($insert_order){
+            $id_pesanan = mysqli_insert_id($koneksi);
+            $message[] = 'Pesanan berhasil! Silahkan melakukan pembayaran';
+            header("location:payment.php?id_pesanan=" . $id_pesanan);
+            exit();
+        } else {
+            echo "<script>alert('Gagal membuat pesanan!');</script>";
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,79 +92,96 @@
         </div>
 
         <div class="card">
-            <h2>Alamat</h2>
-            <div class="address-info">
-                <span class="name">aisa </span>
-                <span class="phone"> | +6281846643602</span>
-                <div class="full-address">Jl. Merur, Kalimanah Wetan, Kalimanah, Purbalingga, Jawa Tengah, 53371</div>
-            </div>
-
-            <div class="divider"></div>
             
-            <div class="address-actions">
-                <button class="address-button">
-                    <span class="material-icons">
-                        add_location_alt
-                        </span> 
-                        <span>Tambah Alamat</span>
-                </button>
-                <button class="address-button">
-                    <span class="material-symbols-outlined">
-                        distance
-                        </span> 
-                        <span>Ganti Alamat</span>
-                </button>
-            </div>
-        </div>
+            <form action="" method="post" id="checkoutForm">
+                        <div class="modal-inner">
+                            <label for="">Nama</label>
+                            <input type="text" name="nama" required>
+                            <label for="">Nomor HandPhone</label>
+                            <input type="number" name="no_telp" required>
+                            <label for="">Detail</label>
+                            <input type="text" name="detail" required>
+                            <label for="">Desa</label>
+                            <input type="text" name="desa" required>
+                            <label for="">Kecamatan</label>
+                            <input type="text" name="kecamatan" required>
+                            <label for="">Kabupaten</label>
+                            <input type="text" name="kbp" required>
+                        </div>  
+</div>
 
-        <div class="card">
-            <h2>Pengiriman</h2>
-            <div class="shipping-method">
-                <input type="radio" id="regular" name="shipping" class="shipping-method-radio" checked>
-                <div class="shipping-method-info">
-                    <div class="shipping-method-name">Regular</div>
-                    <div class="shipping-method-price">
-                        <span class="old-price">Rp 15.000</span>
-                        <span class="new-price">Rp 0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card product-section">
-            <h2>Produk</h2>
-            <div class="product-item">
-                <img src="image\newjir.png" alt="Croissant" class="product-image">
-                <div class="product-details">
-                    <div class="product-name">Croissant</div>
-                    <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                </div>
-                <div class="product-price">Rp 18.000,00</div>
-            </div>
-            <div class="product-item">
-                <img src="image\newjir.png" alt="Croissant" class="product-image">
-                <div class="product-details">
-                    <div class="product-name">Croissant</div>
-                    <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                </div>
-                <div class="product-price">Rp 18.000,00</div>
-            </div>
-            <div class="product-item">
-                <img src="image\newjir.png" alt="Croissant" class="product-image">
-                <div class="product-details">
-                    <div class="product-name">Croissant</div>
-                    <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                </div>
-                <div class="product-price">Rp 18.000,00</div>
-            </div>
-            <div class="product-item">
-                <img src="image\newjir.png" alt="Croissant" class="product-image">
-                <div class="product-details">
-                    <div class="product-name">Croissant</div>
-                    <div class="product-variant"><i>Strawberry Deluxe</i></div>
-                </div>
-                <div class="product-price">Rp 18.000,00</div>
-            </div>
+                        <div class="card">
+                            <h2>Pengiriman</h2>
+                            <div class="shipping-method">
+                                <div class="shipping-option">
+                                    <input type="radio" id="reguler" name="shipping" value="10000" onchange="updateTotal()">
+                                    <label for="reguler">Reguler (Rp 10.000)</label>
+                                </div>
+                                <div class="shipping-option">
+                                    <input type="radio" id="hemat" name="shipping" value="5000" onchange="updateTotal()">
+                                    <label for="hemat">Hemat (Rp 5.000)</label>
+                                </div>
+                                <div class="shipping-option">
+                                    <input type="radio" id="express" name="shipping" value="15000" onchange="updateTotal()">
+                                    <label for="express">Express (Rp 15.000)</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card product-section">
+                            <h2>Produk</h2>
+                            <?php
+                            $grandTotal = 0;
+                            $cart_items = array();
+                            $select_cart = mysqli_query($koneksi, "SELECT * FROM cart");
+                            if(mysqli_num_rows($select_cart) > 0){
+                                while($cart = mysqli_fetch_assoc($select_cart)){
+                            ?>
+                            <div class="product-item">
+                                <img src="product_image/<?= $cart['gambar']; ?>" alt="<?= $cart['nama']; ?>" class="product-image">
+                                <div class="product-details">
+                                    <div class="product-name"><?= $cart['nama']; ?></div>
+                                    <div class="product-variant"><i></i></div>
+                                </div>
+                                <div class="product-price"><?= $cart['harga']; ?></div>
+                                <div class="product-quantity"><?= $cart['quantity']; ?></div>
+                            </div>
+                            <?php   
+                                $cart_items[] = $cart['nama'].' ('.$cart['harga'].' x '. $cart['quantity'].') - ';
+                                $total = ($cart['harga'] * $cart['quantity']);
+                                $grandTotal += $total;
+                                }
+                            } else {
+                                echo "<p>Keranjang kosong</p>";
+                            }
+                            $total_products = implode($cart_items);
+                            ?>
+                            </div>
+                            <div class="checkout-right">
+                                <div class="card order-summary">
+                                    <div class="summary-row">
+                                        <div class="summary-label">Sub Total</div>
+                                        <div class="summary-value">Rp <?= number_format($grandTotal, 0, ',', '.'); ?></div>
+                                    </div>
+                                    <div class="summary-row">
+                                        <div class="summary-label">Ongkos Kirim</div>
+                                        <div class="summary-value" id="shippingCost">Rp 0</div>
+                                    </div>
+                                    <div class="summary-divider"></div>
+                                    <div class="summary-row">
+                                        <div class="summary-label summary-total">Total</div>
+                                        <input type="hidden" name="total_products" value="<?= $total_products; ?>">
+                                        <input type="hidden" name="total_harga" value="<?= $grandTotal ?>">
+                                        <div class="summary-value summary-total" id="finalTotal">Rp <?= number_format($grandTotal, 0, ',', '.'); ?></div>
+                                    </div>
+                                    <?php if($grandTotal > 0): ?>
+                                    <input type="submit" name="checkout_btn" value="Pesan Sekarang" class="checkout_btn">
+                                    <?php else: ?>
+                                    <p>Silahkan tambahkan produk ke keranjang terlebih dahulu</p>
+                                    <?php endif; ?>
+                                </div>
+                        </div>
+                    </form>
         </div>
     </div>
 
@@ -164,7 +221,43 @@
         </div>
     </footer> 
     
-        <script src="dekstop15.js"></script>
+    <script>
+        const subTotal = <?= $grandTotal; ?>;
+        
+        function updateTotal() {
+            const shippingRadios = document.getElementsByName('shipping');
+            let shippingCost = 0;
+            let selectedShipping = '';
+            
+            for (let radio of shippingRadios) {
+                if (radio.checked) {
+                    shippingCost = parseInt(radio.value);
+                    if (radio.id === 'reguler') ;
+                    else if (radio.id === 'hemat');
+                    else if (radio.id === 'express');
+                    break;
+                }
+            }
+            
+            // Update tampilan ongkos kirim
+            document.getElementById('shippingCost').textContent = 'Rp ' + shippingCost.toLocaleString('id-ID');
+            
+            // Update total keseluruhan
+            const finalTotal = subTotal + shippingCost;
+            document.getElementById('finalTotal').textContent = 'Rp ' + finalTotal.toLocaleString('id-ID');
+            
+            // Update info pengiriman
+            document.getElementById('shippingInfo').innerHTML = '<strong>' + selectedShipping + '</strong>';
+            
+            // Enable/disable checkout button
+            document.getElementById('checkoutBtn').disabled = shippingCost === 0;
+        }
+        
+        // Disable checkout button initially
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('checkoutBtn').disabled = true;
+        });
+    </script>
 
 </body>
 </html>

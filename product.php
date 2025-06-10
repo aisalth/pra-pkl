@@ -8,6 +8,7 @@
         header('location:login.php');
     }
     
+    // Add to cart
     if(isset($_POST['add_to_cart'])){
         $nama = $_POST['nama'];
         $harga = $_POST['harga'];
@@ -15,38 +16,38 @@
         $quantity = 1;
         $id_product = $_POST['id_product'];
 
+        // Check if product already in cart
         $select_cart = mysqli_query($koneksi, "SELECT * FROM cart WHERE id_product = '$id_product'");
 
         if(mysqli_num_rows($select_cart) > 0){
-            $update_product= mysqli_query($koneksi, "UPDATE cart SET quantity = quantity + 1 WHERE id_product = '$id_product' LIMIT 1");
-            $message[] = "Produk akan ditambahkan ke keranjang";
-        } else{
-            $insert_product = mysqli_query($koneksi, "INSERT INTO cart(nama, harga, quantity, gambar, id_product) VALUES('$nama', '$harga', '$quantity', '$gambar', '$id_product')") ;
-            $message = "Produk telah ditambahkan ke keranjang";
+            // Update quantity if exists
+            mysqli_query($koneksi, "UPDATE cart SET quantity = quantity + 1 WHERE id_product = '$id_product");
+            $message[] = "Produk ditambahkan ke keranjang";
+        } else {
+            // Insert new product to cart
+            mysqli_query($koneksi, "INSERT INTO cart(nama, harga, quantity, gambar, id_product) VALUES('$nama', '$harga', '$quantity', '$gambar', '$id_product')");
+            $message[] = "Produk telah ditambahkan ke keranjang";
         }
     }
 
-     
-
-
+    // Add to wishlist
     if(isset($_POST['add_to_fav'])){
         $nama = $_POST['nama'];
         $harga = $_POST['harga'];
         $gambar = $_POST['gambar'];
         $id_product = $_POST['id_product'];
 
+        // Check if product already in wishlist
         $select_fav = mysqli_query($koneksi, "SELECT * FROM wishlist WHERE id_product = '$id_product'");
 
         if(mysqli_num_rows($select_fav) > 0){
-            $message[] = "Produk akan ditambahkan ke wishlist";
-        } else{
-            $insert_product = mysqli_query($koneksi, "INSERT INTO wishlist(nama, harga, gambar, id_product) VALUES('$nama', '$harga', '$gambar', '$id_product')") ;
-            $message = "Produk telah ditambahkan ke wishlist";
+            $message[] = "Produk sudah ada di wishlist";
+        } else {
+            // Insert new product to wishlist
+            mysqli_query($koneksi, "INSERT INTO wishlist(nama, harga, gambar, id_product) VALUES('$nama', '$harga', '$gambar', '$id_product')");
+            $message[] = "Produk telah ditambahkan ke wishlist";
         }
     }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -74,8 +75,8 @@
             <a href="tentang.html">Tentang</a>
             <a href="index.html#testimonial-section">Review</a>
             <a href="dekstop4.html">Kontak</a>
-            
         </nav>
+        
         <div class="icons">
            <a href=""><div id="user-icon"><i class="fa-regular fa-circle-user"></i></div></a>
            <a href="wishlist.php"><div id="heart-icon"><i class="fa-regular fa-heart"></i></div></a>
@@ -109,12 +110,9 @@
     </div>
     <h1 class="hero-text">FROM OUR OVEN<br>TO YOUR TABLE</h1>
 
-    
     <div class="kontener">
-
         <div class="khusuh">
             <div class="sidebar">
-                <!--<h2>Menu</h2>-->
                 <img src="c:\Users\ASUS\Downloads\Line 5.png" alt="" class="line">
                 
                 <div class="menu-item" id="croissant-item">
@@ -171,126 +169,97 @@
                     <div class="submenu-item">Mille Feuille Vanila</div>
                     <div class="submenu-item">Mille Feuille Kopi</div>
                 </div>
-                
             </div>
         </div>
     
-    <div class="divider"></div>
+        <div class="divider"></div>
         
         <div class="product-carousel">
-
             <?php
             $select_product = mysqli_query($koneksi, "SELECT * FROM products");
             if(mysqli_num_rows($select_product) > 0){
                 while($product = mysqli_fetch_assoc($select_product)) {
             ?>
             <div class="product-area">
-            <form action="" method="POST">
-                <a href="detail_product.php?detail=<?= $product['id_product']; ?>" class="option-btn>
-                <input type="hidden" name="id_product" value="<?= $product['id_product'] ?>">
-                <input type="hidden" name="gambar" value="<?= $product['gambar'] ?>">
-                <input type="hidden" name="nama" value="<?= $product['nama'] ?>">
-                <input type="hidden" name="harga" value="<?= $product['harga'] ?>">
-                <img src="product_image/<?= $product['gambar']; ?>" alt="" class="product-image">
-                <div class="product-title"><?= $product['nama']; ?></div>
-                <div class="rating">
-                                <span class="star">★★★★</span>
-                                <span class="star" style="color: #ddd;">★</span> 
-                                <div class="price">Rp <?= $product['harga'] ?></div>
-                            </div>               
-                            <div class="button-group">
-                                <button class="btn-favorite">
-                                    <input type="submit" name="add_to_fav" value="♡" id="love-btn">
-                                </button>
-                                    <!-- <input type="submit" class="btn-cart" value="Add to Cart" style="margin-left: 8px;">
-                                    <div id="cart-btn" class="fas fa-shopping-cart"></div> -->
-                                <input type="submit" value="Add to Cart" name="add_to_cart" class="btn-cart">
-                                    <!-- <div id="cart-btn" class="fas fa-shopping-cart"></div> -->
-                                </input>
-                            </div>
+                <a href="detail_product.php?detail=<?= $product['id_product']; ?>">
+                    <img src="product_image/<?= $product['gambar']; ?>" alt="" class="product-image">
+                    <div class="product-title"><?= $product['nama']; ?></div>
+                    <div class="rating">
+                        <span class="star">★★★★</span>
+                        <span class="star" style="color: #ddd;">★</span> 
+                        <div class="price">Rp <?= number_format($product['harga']) ?></div>
+                    </div>
                 </a>
-               </form>                    
-            </div>  
+                
+                <!-- Buttons Form -->
+                <form action="" method="POST">
+                    <input type="hidden" name="id_product" value="<?= $product['id_product']; ?>">
+                    <input type="hidden" name="gambar" value="<?= $product['gambar'] ?>">
+                    <input type="hidden" name="nama" value="<?= $product['nama'] ?>">
+                    <input type="hidden" name="harga" value="<?= $product['harga'] ?>">
+                    
+                    <div class="button-group">
+                        <button type="submit" name="add_to_fav" class="btn-favorite">♡</button>
+                        <button type="submit" name="add_to_cart" class="btn-cart">Add to Cart</button>
+                    </div>
+                </form>
             </div>
-   <?php
-      }
-    }
-   ?>
-        
+            <?php
+                }
+            }
+            ?>
 
-
-
-            <!-- Optional: Indicator dots -->
-        <div class="indicator-dots">
-            <span class="dot active" data-index="0"></span>
-            <span class="dot" data-index="1"></span>
-            <span class="dot" data-index="2"></span>
-            <span class="dot" data-index="3"></span>
-            <span class="dot" data-index="4"></span>
-        </div>
-        
-    </div>
-
-    </div>
-</div>
-
-<div class="keranjang">
-    <h1>Keranjang</h1>
-    <div class="daftarBrg">
-
-    </div>
-    <div class="btn">
-  
-    </div>
-</div>
-
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-section">
-            <h3>Connect To Us</h3>
-            <div class="social-icons">
-                <a href="https://www.instagram.com/" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.tiktok.com/" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="https://x.com/" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://www.youtube.com/" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+            <!-- Indicator dots -->
+            <div class="indicator-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+                <span class="dot" data-index="4"></span>
             </div>
         </div>
+    </div>
 
-        <div class="footer-section">
-            <ul class="footer-links">
+    <div class="keranjang">
+        <h1>Keranjang</h1>
+        <div class="daftarBrg"></div>
+        <div class="btn"></div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Connect To Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/" class="social-icon"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://x.com/" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://www.youtube.com/" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <ul class="footer-links">
                     <li><a href="index.html#home">Beranda</a></li>
                     <li><a href="index.html#topdecoration">Produk</a></li>
                     <li><a href="index.html#sout">Tentang Kami</a></li>
                     <li><a href="index.html#testimonial-section">Review</a></li>
                     <li><a href="index.html#neks">Lokasi</a></li>
-            </ul>
+                </ul>
+            </div>
+
+            <div class="footer-sectionth">
+                <h3>Customer Care</h3>
+                <p>cs@pasner.com</p>
+                <p>083846643602 (WhatsApp)</p>
+            </div>
         </div>
 
-        <div class="footer-sectionth">
-            <h3>Customer Care</h3>
-            <p>cs@pasner.com</p>
-            <p>083846643602 (WhatsApp)</p>
+        <div class="copyright">
+            2025 Copyright PASTRY CORNER. All Right Reserved
         </div>
-
-        <!--<div class="footer-tion">
-            <div class="footer-on">
-            <h3>Customer Care</h3>
-            </div>
-            <div class="footer-at">
-            <p>cs@pastner.com</p>
-            </div>
-            <p>083846643602 (WhatsApp)</p>
-        </div>-->
-    </div>
-
-    <div class="copyright">
-        2025 Copyright PASTRY CORNER. All Right Reserved
-    </div>
-</footer>
+    </footer>
 
     <script src="dekstop2.js"></script>
-
-    
 </body>
 </html>
-

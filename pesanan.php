@@ -55,7 +55,7 @@
             
             
             <?php
-                $select_order = mysqli_query($koneksi, "SELECT * FROM pesanan");
+                $select_order = mysqli_query($koneksi, "SELECT * FROM pesanan JOIN payment ON pesanan.id_pesanan = payment.id_pesanan");
                 while($order = mysqli_fetch_assoc($select_order)){
             ?>
             <div class="product-card">
@@ -63,6 +63,11 @@
                     <div class="address-box">
                         <p><strong>Informasi Pemesan:</strong></p>
                         <p><?= $order['customer']; ?></p>
+                        <?php
+                        if($order['tipe_pesanan'] == "delivery"){
+                        ?>
+                        <p><strong>Alamat:</strong> <?= ucfirst($order['alamat']); ?></p>
+                        <?php } ?>
                         <p><strong>Tipe Pesanan:</strong> <?= $order['tipe_pesanan']; ?></p>
                         <p><strong>Tanggal Pesanan:</strong> <?= $order['tanggal_order']; ?></p>
                     </div>
@@ -84,7 +89,17 @@
                         <div>Status</div>
                         <div><strong><?= $order['status']; ?></strong></div>
                     </div>
+
+                    <div class="total-row2">
+                        <?php
+                        if($order['status'] == "menunggu pembayaran"){
+                        ?>
+                        <button class="cek" ><a href="confirm_payment.php?id_pesanan=<?= $order['id_pesanan'] ?>" style="color: #ffffff;">Selesaikan Pembayaran</a></button>
+                        <?php } ?>
+                    </div>
+                    
             </div>
+            
             <?php } ?>
         </div>
               

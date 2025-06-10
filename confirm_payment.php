@@ -11,8 +11,7 @@
 
     $id_pesanan = $_GET['id_pesanan'];
 
-    if(isset($_POST['unggah'])){
-        $id_payment = $_POST['id_payment'];
+    if(isset($_POST['unggah'])){;
         $bukti = $_FILES['bukti']['name'];
         $bukti_size = $_FILES['bukti']['size'];
         $bukti_tmp_name = $_FILES['bukti']['tmp_name'];
@@ -21,7 +20,7 @@
         if($bukti_size > 2000000){
             $message[] = 'ukuran gambar terlalu besar!';
         }else{
-            $update_bukti = mysqli_query($koneksi, "UPDATE payment SET bukti = '$bukti' WHERE id_payment = '$id_payment'");
+            $update_bukti = mysqli_query($koneksi, "UPDATE payment SET bukti = '$bukti' WHERE id_pesanan = '$id_pesanan'");
             move_uploaded_file($bukti_tmp_name, $bukti_folder);
             $message[] = 'berhasil mengunggah bukti pembayaran';
             header("location:confirm_order.php?id_pesanan=" . $id_pesanan);
